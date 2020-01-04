@@ -1,5 +1,4 @@
-#Set working directory and load libraries
-setwd("/Users/andrew.delos.santos/Johns Hopkins University Data Science Specialization Capstone")
+#Load libraries
 require(quanteda)
 library(NLP)
 require(tm)
@@ -9,6 +8,11 @@ library(ngram)
 library(gridExtra)
 library(stringr)
 require(data.table)
+library(markdown)
+library(here)
+library(shiny)
+require(shinythemes)
+
 
 #Clean Blogs and sample .05% of the lines due to RAM and memory limitations
 blogs_file <- "final/en_US/en_US.blogs.txt"
@@ -219,6 +223,7 @@ news_one_gram$Unigram <- as.character(news_one_gram$Unigram)
 Unigram <- bind_rows(blogs_one_gram, twitter_one_gram, news_one_gram)
 Unigram <- na.omit(Unigram, cols = "Unigram")
 Unigram_dic <- Unigram
+save(Unigram_dic, file = "Unigram_dic.RData")
 
 #Creation of N-gram index dictionary
 dict_look_up <- 1:nrow(Unigram_dic)
@@ -236,6 +241,8 @@ names(one_gram_vector) <- Unigram$Unigram
 Unigram <- word_match(one_gram_vector, dict_look_up)
 colnames(Unigram) <- c("word1", "Count")
 one_gram_data_table <- as.data.table(Unigram)
+saveRDS(one_gram_data_table, "one_gram_data_table.RDS")
+save(one_gram_data_table, file = "one_gram_data_table.RDdata")
 
 
 load("blogs_two_gram.RData")
@@ -256,6 +263,8 @@ names(two_gram_vector) <- Bigram$Bigram
 Bigram <- word_match(two_gram_vector, dict_look_up)
 colnames(Bigram) <- c("word1","word2", "Count")
 two_gram_data_table <- as.data.table(Bigram)
+saveRDS(two_gram_data_table, "two_gram_data_table.RDS")
+save(two_gram_data_table, file = "two_gram_data_table.RData")
 
 load("blogs_three_gram.RData")
 colnames(blogs_three_gram) <- c("Trigram", "Count")
@@ -274,6 +283,8 @@ names(three_gram_vector) <- Trigram$Trigram
 Trigram <- word_match(three_gram_vector, dict_look_up)
 colnames(Trigram) <- c("word1", "word2","word3", "Count")
 three_gram_data_table <- as.data.table(Trigram)
+saveRDS(three_gram_data_table, "three_gram_data_table.RDS")
+save(three_gram_data_table, file = "three_gram_data_table.RData")
 
 
 load("blogs_four_gram.RData")
@@ -312,10 +323,15 @@ colnames(partition_3) <- c("word1", "word2", "word3", "word4", "Count")
 
 four_gram_english_final <- rbind(partition_1, partition_2, partition_3)
 four_gram_english_final <- as.data.table(four_gram_english_final)
+saveRDS(four_gram_english_final, "four_gram_english_final.RDS")
+save(four_gram_english_final, file = "four_gram_english_final.RData")
+
+
 
 dict_look_up <- 1:nrow(Unigram_dic)
 names(dict_look_up) <- Unigram_dic$Unigram
 dict_look_up_length <- length(dict_look_up)
+
 
 l_up <- function(x) {
   for (i in 1:dict_look_up_length) {
@@ -406,8 +422,7 @@ predict <- function(input, max = 5) {
   next_word
 }
 
-library(shiny)
-require(shinythemes)
+
 server <- shinyServer(function(input, output) {
 
   
@@ -431,6 +446,9 @@ server <- shinyServer(function(input, output) {
 ui <- shinyUI(navbarPage(strong("Predictive Text Algorithm App"),
                    theme = shinytheme("cyborg"),
                    tabPanel(strong("Predict Word"),
+                            tags$style(type = "text/css",
+                                       ".shiny-output-error { visibility: hidden; }",
+                                       ".shiny-output-error:before { visibility: hidden; }"),
                             fluidPage(
                               fluidRow(
                                 column(5, offset = 1,
@@ -451,8 +469,8 @@ ui <- shinyUI(navbarPage(strong("Predictive Text Algorithm App"),
                    tabPanel(strong("Instructions")),
                    mainPanel(
                      h3("1) Enter 1-5 words in the text box"),
-                     h3("2) Press predict next word button and error will disappear with new output"),
+                     h3("2) Press predict next word button and predicted words will appear"),
                    )
 ))
-
+options(shiny.sanitize.errors = TRUE)
 shinyApp(ui = ui, server = server)
