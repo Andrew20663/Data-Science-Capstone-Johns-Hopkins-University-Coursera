@@ -1,4 +1,4 @@
-### Data-Science-Capstone-Johns-Hopkins-University-Coursera
+# Data-Science-Capstone-Johns-Hopkins-University-Coursera
 
 ## Abstract
 The goal of this particular project was to create a predictive text algorithm and develop a predictive text application using
