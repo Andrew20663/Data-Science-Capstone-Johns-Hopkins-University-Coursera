@@ -1,7 +1,7 @@
 # Data-Science-Capstone-Johns-Hopkins-University-Coursera
 
 ## Abstract
-The goal of this particular project was to create a predictive text algorithm and develop a predictive text application using
+The goal of this particular project was to create a predictive text application using
 Shiny from R Studio for both the Data Science Specialization and Data Science: Machine Learning and Statistics Specialization 
 for Johns Hopkins University on Coursera. The project touches upon 2 areas in Natural Language Processing:
 
